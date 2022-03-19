@@ -234,11 +234,71 @@ public class Chessboard {
         return isPossible;
     }
 
-    Piece[][] getPieces() {
+    public Piece[][] getPieces() {
         return pieces;
     }
 
     void setBoardPieces(Piece[][] newPieces) {
         this.pieces = newPieces;
+    }
+
+    public void reset() {
+        this.lastMove = new Position[2];
+
+        this.pieces = new Piece[8][8];
+
+        this.pieces[0] = new Piece[]{
+                new Rook(this, new Position(0, 0), Color.WHITE),
+                new Knight(this, new Position(0, 1), Color.WHITE),
+                new Bishop(this, new Position(0, 2), Color.WHITE),
+                new Queen(this, new Position(0, 3), Color.WHITE),
+                new King(this, new Position(0, 4), Color.WHITE),
+                new Bishop(this, new Position(0, 5), Color.WHITE),
+                new Knight(this, new Position(0, 6), Color.WHITE),
+                new Rook(this, new Position(0, 7), Color.WHITE)
+        };
+        this.pieces[1] = new Piece[]{
+                new Pawn(this, new Position(1, 0), Color.WHITE),
+                new Pawn(this, new Position(1, 1), Color.WHITE),
+                new Pawn(this, new Position(1, 2), Color.WHITE),
+                new Pawn(this, new Position(1, 3), Color.WHITE),
+                new Pawn(this, new Position(1, 4), Color.WHITE),
+                new Pawn(this, new Position(1, 5), Color.WHITE),
+                new Pawn(this, new Position(1, 6), Color.WHITE),
+                new Pawn(this, new Position(1, 7), Color.WHITE)
+        };
+
+        this.pieces[6] = new Piece[]{
+                new Pawn(this, new Position(6, 0), Color.BLACK),
+                new Pawn(this, new Position(6, 1), Color.BLACK),
+                new Pawn(this, new Position(6, 2), Color.BLACK),
+                new Pawn(this, new Position(6, 3), Color.BLACK),
+                new Pawn(this, new Position(6, 4), Color.BLACK),
+                new Pawn(this, new Position(6, 5), Color.BLACK),
+                new Pawn(this, new Position(6, 6), Color.BLACK),
+                new Pawn(this, new Position(6, 7), Color.BLACK)
+        };
+
+        this.pieces[7] = new Piece[]{
+                new Rook(this, new Position(7, 0), Color.BLACK),
+                new Knight(this, new Position(7, 1), Color.BLACK),
+                new Bishop(this, new Position(7, 2), Color.BLACK),
+                new Queen(this, new Position(7, 3), Color.BLACK),
+                new King(this, new Position(7, 4), Color.BLACK),
+                new Bishop(this, new Position(7, 5), Color.BLACK),
+                new Knight(this, new Position(7, 6), Color.BLACK),
+                new Rook(this, new Position(7, 7), Color.BLACK)
+        };
+    }
+
+    public void setColor(int x, int y, Color color) {
+        System.out.println("old color : " + this.pieces[x][y].getColor().name());
+        System.out.println("switch to : " + color.name());
+        this.pieces[x][y].setColor(color);
+        System.out.println("new color : " + this.pieces[x][y].getColor().name());
+    }
+
+    public void setPosition(int x, int y, Position pos) {
+        this.pieces[x][y].setPosition(pos);
     }
 }
