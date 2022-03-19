@@ -1,0 +1,12 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+.piece {
+	-fx-background-color : green;
+	-fx-font: 40.0px Tahoma;
+}
+
+.white {
+	-fx-fill : blue;
+}
+.black {
+	-fx-fill : red;
+}
