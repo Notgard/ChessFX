@@ -5,12 +5,13 @@ import chess.util.ChessMoveException;
 import chess.util.Color;
 import chess.util.Position;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  * Classe représentant un échiquier lors d'une partie d'échecs
  */
-public class Chessboard {
+public class Chessboard implements Cloneable {
 
     /**
      * Tableau de pièces représentant les cases de l'échiquier (une case vide vaut null).
@@ -74,6 +75,11 @@ public class Chessboard {
                 new Rook(this, new Position(7, 7), Color.BLACK)
         };
 
+    }
+
+    public Chessboard(Piece[][] pieces, Position[] lastMove) {
+        this.pieces = pieces;
+        this.lastMove = lastMove;
     }
 
     /**
@@ -142,7 +148,7 @@ public class Chessboard {
     public void setPiece(Position pos, Piece newPiece) {
         Position oldPos = newPiece.getPosition();
         pieces[pos.getX()][pos.getY()] = newPiece;
-        System.out.println("Moved from: " + oldPos.toAlgebraicNotation() + " To: " + pos.toAlgebraicNotation());
+        //System.out.println("Moved from: " + oldPos.toAlgebraicNotation() + " To: " + pos.toAlgebraicNotation());
         this.lastMove[0] = new Position(oldPos.toAlgebraicNotation());
         this.lastMove[1] = pos;
         pieces[oldPos.getX()][oldPos.getY()] = null;
@@ -300,5 +306,44 @@ public class Chessboard {
 
     public void setPosition(int x, int y, Position pos) {
         this.pieces[x][y].setPosition(pos);
+    }
+
+    public Chessboard(Chessboard board) {
+        this(board.pieces, board.lastMove);
+    }
+
+    @Override
+    public Chessboard clone() throws CloneNotSupportedException {
+        Chessboard board = null;
+        try {
+            board = (Chessboard) super.clone();
+        } catch (CloneNotSupportedException e) {
+            board = new Chessboard(
+                    this.getPieces(), this.getLastMove());
+        }
+
+        for (int i = 0; i < this.pieces.length; i++) {
+            for (int j = 0; j < this.pieces[i].length; j++) {
+                if(this.pieces[i][j] != null) {
+                    board.pieces[i][j] = (Piece) this.pieces[i][j].clone();
+                    Position clone = (Position) this.pieces[i][j].getPosition().clone();
+                    board.pieces[i][j].setPosition(clone);
+                }
+            }
+        }
+        board.lastMove = Arrays.copyOf(this.lastMove, this.lastMove.length);
+        return board;
+    }
+
+    public void setLastMove(Position[] lastMove) {
+        this.lastMove = lastMove;
+    }
+
+    public Position[] getLastMove() {
+        return this.lastMove;
+    }
+
+    public void setPieces(Piece[][] pieces) {
+        this.pieces = pieces;
     }
 }

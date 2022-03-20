@@ -51,4 +51,23 @@ public class Queen extends Piece {
         return board.isPiecePresentOnSameLineBetween(this.getPosition(), destination) || board.isPiecePresentOnSameColumnBetween(this.getPosition(), destination) || board.isPiecePresentOnSameDiagonalBetween(this.getPosition(), destination);
     }
 
+    @Override
+    public Object clone() {
+        Piece piece = null;
+        try {
+            Queen clone = (Queen) super.superClone();
+            /* some operations */
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            piece = new Queen(
+                    this.getBoard(), this.getPosition(), this.getColor());
+        }
+        try {
+            piece.board = (Chessboard) this.board.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        piece.setPosition((Position) this.getPosition().clone());
+        return piece;
+    }
 }

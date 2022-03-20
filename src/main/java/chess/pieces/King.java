@@ -9,7 +9,7 @@ import chess.util.Symbol;
 /**
  * Classe réprésentant le roi
  */
-public class King extends Piece {
+public class King extends Piece{
 
     /**
      * Constructeur d'une pièece d'échec (Roi)
@@ -66,7 +66,7 @@ public class King extends Piece {
         }
         //droite
         else if(current_y < destination.getY()) {
-            Piece right_piece = board.getPiece(current_x, destination.getY()+1);
+            Piece right_piece = destination.getY()+1 < 8 ? board.getPiece(current_x, destination.getY()+1) : null;
             if( destination.getY() - current_y == 1) {
                 isPossible = true;
             }
@@ -81,7 +81,8 @@ public class King extends Piece {
         }
         //gauche
         else if (destination.getY() < current_y){
-            Piece right_piece = board.getPiece(current_x, destination.getY()-1);
+            System.out.println(current_x + " " + destination.getY());
+            Piece right_piece = destination.getY()-1 < 0 ? null : board.getPiece(current_x, destination.getY()-1);
             if(current_y - destination.getY() == 1) {
                 isPossible = true;
             }
@@ -151,5 +152,25 @@ public class King extends Piece {
     public boolean sameColorPiece(Position destination) {
         String opposingColor = board.getPiece(destination) == null ? "" : board.getPiece(destination).getColor().name();
         return board.getPiece(this.getPosition()).getColor().name().equals(opposingColor);
+    }
+
+    @Override
+    public Object clone() {
+        Piece piece = null;
+        try {
+            King clone = (King) super.superClone();
+            /* some operations */
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            piece = new King(
+                    this.getBoard(), this.getPosition(), this.getColor());
+        }
+        try {
+            piece.board = (Chessboard) this.board.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        piece.setPosition((Position) this.getPosition().clone());
+        return piece;
     }
 }

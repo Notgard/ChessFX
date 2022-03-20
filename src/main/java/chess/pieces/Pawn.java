@@ -71,17 +71,9 @@ public class Pawn extends Piece {
         }
 
         if(this.isBlack()) {
-            System.out.println("its black");
             if(notMovedYet) {
-                System.out.println("it hasnt moved yet");
-                System.out.println(current_x + " " + current_y);
-                System.out.println(current_x - destination.getX());
-                System.out.println(destination.getY() == current_y);
-                System.out.println(current_x - destination.getX());
-                System.out.println(destination.getY() == current_y);
                 if(current_x - destination.getX() == 1 && destination.getY() == current_y||
                         current_x - destination.getX() == 2 && destination.getY() == current_y) {
-                    System.out.println("moves in 1 or 2");
                     isPossible = true;
                 }
             }
@@ -120,4 +112,23 @@ public class Pawn extends Piece {
         return isPossible;
     }
 
+    @Override
+    public Object clone() {
+        Piece piece = null;
+        try {
+            Pawn clone = (Pawn) super.superClone();
+            /* some operations */
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            piece = new Pawn(
+                    this.getBoard(), this.getPosition(), this.getColor());
+        }
+        try {
+            piece.board = (Chessboard) this.board.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        piece.setPosition((Position) this.getPosition().clone());
+        return piece;
+    }
 }

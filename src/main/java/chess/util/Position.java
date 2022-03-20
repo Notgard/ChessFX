@@ -1,10 +1,12 @@
 package chess.util;
 
+import java.io.Serializable;
+
 /**
  * @author roub0002
  * Représente la position d'une pièce lors d'une partie d'échecs
  */
-public class Position {
+public class Position implements Cloneable {
     private int x, y;
 
     /**
@@ -167,5 +169,18 @@ public class Position {
     public static void main(String[] args) {
         Position a = new Position("A1");
         System.out.println(a.isOnSameColumnAs(new Position("A4")));
+    }
+
+    public Position(Position pos) {
+        this(pos.x, pos.y);
+    }
+
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            return new Position(this.x, this.y);
+        }
     }
 }

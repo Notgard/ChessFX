@@ -65,4 +65,23 @@ public class Knight extends Piece {
         return isPossible;
     }
 
+    @Override
+    public Object clone() {
+        Piece piece = null;
+        try {
+            Knight clone = (Knight) super.superClone();
+            /* some operations */
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            piece = new Knight(
+                    this.getBoard(), this.getPosition(), this.getColor());
+        }
+        try {
+            piece.board = (Chessboard) this.board.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        piece.setPosition((Position) this.getPosition().clone());
+        return piece;
+    }
 }

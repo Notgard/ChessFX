@@ -51,4 +51,23 @@ public class Rook extends Piece {
         return board.isPiecePresentOnSameColumnBetween(this.getPosition(), destination) || board.isPiecePresentOnSameLineBetween(this.getPosition(), destination);
     }
 
+    @Override
+    public Object clone() {
+        Piece piece = null;
+        try {
+            Rook clone = (Rook) super.superClone();
+            /* some operations */
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            piece = new Rook(
+                    this.getBoard(), this.getPosition(), this.getColor());
+        }
+        try {
+            piece.board = (Chessboard) this.board.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        piece.setPosition((Position) this.getPosition().clone());
+        return piece;
+    }
 }

@@ -5,12 +5,12 @@ import chess.util.Color;
 import chess.util.Position;
 import chess.Chessboard;
 
-public abstract class Piece {
+public abstract class Piece implements Cloneable {
     private Position position;
     private final char symbol;
     private Color color;
-    private final String name;
-    protected final Chessboard board;
+    private String name;
+    protected Chessboard board;
 
     /**
      * Constructeur instanciant une pièce d'échec
@@ -111,5 +111,23 @@ public abstract class Piece {
 
     public void setColor(chess.util.Color color) {
         this.color = color;
+    }
+
+    public Chessboard getBoard() {
+        return this.board;
+    }
+
+    public void setBoard(Chessboard board) {
+        this.board = board;
+    }
+
+    public Piece(Piece p) {
+        this(p.getBoard(), p.getPosition(), p.getColor(), p.getName(), p.getSymbol());
+    }
+
+    public abstract Object clone();
+
+    public Object superClone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }
