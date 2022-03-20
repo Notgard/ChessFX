@@ -74,6 +74,12 @@ public class AI {
         return value;
     };
 
+    /**
+     * Méthode pratique permettant d'obtenir tous les coups possibles sur u =n échiquier
+     *
+     * @param board l'échiquier
+     * @return un couple de position [départ, destination]
+     */
     private Position[][] getAllPossibleMoves(Chessboard board) {
         ArrayList<Position[]> all_moves = new ArrayList<>();
         for (int ligne = 0; ligne < 8; ligne++) {
@@ -106,16 +112,24 @@ public class AI {
         return all_possible_moves;
     }
 
+    /**
+     * Obtient le meilleur coup d'échec sur un échiquier sur la base d'un algorithme Min-Max
+     *
+     * @param board l'échiquier
+     * @param playerColor la couleur du joueur actuelle
+     * @return un couple de position [départ, destination]
+     * @throws CloneNotSupportedException
+     * @throws ChessMoveException
+     */
     public Position[] getBestPossibleMove(Chessboard board, Color playerColor) throws CloneNotSupportedException, ChessMoveException {
-        // List all possible moves
         Chessboard original = board.clone();
         Position[][] all_possible_moves = this.getAllPossibleMoves(original);
         int length = all_possible_moves.length;
         System.out.println(original);
-        // Sort moves randomly, so the same move isn't always picked on ties
+
         Collections.shuffle(Arrays.asList(all_possible_moves));
 
-        // Search for move with highest value
+
         Position bestMoveSoFarStart = null;
         Position bestMoveSoFarDest = null;
         var bestMoveValue = Double.NEGATIVE_INFINITY;
