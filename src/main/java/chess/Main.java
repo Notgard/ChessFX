@@ -1,6 +1,7 @@
 package chess;
 
 import chess.pieces.*;
+import chess.util.AI;
 import chess.util.ChessMoveException;
 import chess.util.Position;
 import javafx.animation.KeyFrame;
@@ -12,6 +13,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
@@ -25,7 +27,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -104,19 +105,18 @@ public class Main extends Application {
                 }
             }
 
+            /**
+             * Conteneur pour l'affichage de l'historique des coups
+             */
             VBox historic = new VBox();
             Text desc = new Text("L'historique des coup d'échecs :");
-            TextField historic_field = new TextField();
+            TextArea historic_field = new TextArea();
+            //historic_field.setAlignment(Pos.TOP_LEFT);
             historic_field.setPrefSize(200, 400);
             historic_field.setEditable(false);
             setupPieces(board, chess.util.Color.WHITE);
             GridPane.setValignment(historic_field, VPos.TOP);
             historic.getChildren().addAll(desc, historic_field);
-            //echiquier.add(historic, 15, 4);
-            /* Pour démo : je pose le cavalier noir
-            echiquier.add(cavalier_noir, 3, 2);
-            echiquier.add(cavalier_blanc, 6, 5);
-            */
 
             // Les zones de saisie
             HBox saisie = new HBox();
@@ -254,13 +254,51 @@ public class Main extends Application {
             // Appel de la lambda function sur le clic du bouton 'quitter'
             quitter.setOnAction(e -> Platform.exit());
 
+
+            Button AIMove = new Button("Coup de l'IA");
+            AIMove.setOnAction(e -> {
+               AI ai = new AI();
+                try {
+                    Chessboard copy = board.clone();
+                    //Position[] moves = ai.getBestPossibleMove(copy, currentColor);
+                    Position[] randomAiMoves = ai.makeRandomValidMove(board, currentColor);
+                    Position start = randomAiMoves[0];
+                    Position end = randomAiMoves[1];
+                    System.out.println(Arrays.toString(randomAiMoves));
+
+                    System.out.println(start + "->" + start.toAlgebraicNotation() + " " + end + "->" + end.toAlgebraicNotation());
+
+                    System.out.println(board);
+                    Piece chess_piece = null;
+                    try {
+                        Position original_start = (Position) start.clone();
+                        chess_piece= board.getPiece(start);
+                        chess_piece.moveTo(end);
+                        System.out.println(end);
+                        System.out.println(original_start);
+                        deplace(text_piece[original_start.getX()][original_start.getY()], echiquier, end.getY()+1, end.getX()+1);
+                    }
+                    catch (Exception ignored) {
+
+                    }
+                    this.turn++;
+
+                    current_turn.setText("Current Turn : " + String.valueOf(this.turn));
+                    move_historic.add(turn + ". " + chess_piece.getName().charAt(0) + chess_piece.getColor().name().charAt(0) + start.toAlgebraicNotation() + "-" + chess_piece.getPosition().toAlgebraicNotation());
+                    historic_field.setText(move_historic.toString());
+                } catch (CloneNotSupportedException ex) {
+                    ex.printStackTrace();
+                }
+            });
+
             current_turn = new Text("Current Turn : " + this.turn);
             GridPane.setHalignment(current_turn, HPos.LEFT);
             GridPane.setMargin(current_turn, new Insets(0.0, 10.0, 0.0, 10.0));
             boutons.add(current_turn, 0, 0);
             boutons.add(demarre_blanc, 1, 0);
             boutons.add(demarre_noir, 2, 0);
-            boutons.add(quitter, 3, 0);
+            boutons.add(AIMove, 3, 0);
+            boutons.add(quitter, 4, 0);
 
             // crée la scène (contenu de la fenêtre principale
             Scene scene = new Scene(root, 700, 520);
@@ -293,31 +331,28 @@ public class Main extends Application {
      */
     private void deplace(Text piece, GridPane grille_echiquier, int colonne, int ligne) {
         grille_echiquier.getChildren().remove(piece);
-        System.out.println("Ligne " + ligne + " Colonne " + colonne);
         System.out.println("Move this piece : " + piece.getText());
+        System.out.println(this.getNodeFromGridPane(grille_echiquier, colonne, ligne));
         if(this.getNodeFromGridPane(grille_echiquier, colonne, ligne) instanceof Text) {
-            grille_echiquier.getChildren().remove(this.getNodeFromGridPane(grille_echiquier, colonne, ligne));
+            System.out.println(this.getNodeFromGridPane(grille_echiquier, colonne, ligne));
+            grille_echiquier.getChildren().remove(this.getNodeFromGridPane(grille_echiquier, colonne+1, ligne+1));
         }
         grille_echiquier.add(piece, colonne, ligne);
         int x = -1;
         int y = -1;
         for(int i = 0, len = text_piece.length; i < len; i++) {
             for(int j = 0, length = text_piece[i].length; j < length; j++) {
-                System.out.print(text_piece[i][j] != null ? text_piece[i][j].getText() + " " : "");
                 if (text_piece[i][j] == piece) {
                     x = i;
                     y = j;
                 }
             }
-            System.out.println();
         }
-        System.out.println(x + " & " + y);
         Text temp = text_piece[x][y];
-        System.out.println(temp.getText());
-        text_piece[x][y] = null;
 
+        text_piece[x][y] = null;
         text_piece[ligne-1][colonne-1] = temp;
-        System.out.println(text_piece[ligne-1][colonne-1].getText());
+
         this.currentColor = currentColor == chess.util.Color.BLACK ? chess.util.Color.WHITE : chess.util.Color.BLACK;
     }
 
@@ -372,19 +407,23 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * Permet de mettre en place les pièces
+     *
+     * @param board
+     * @param switchColor
+     */
     private void setupPieces(Chessboard board, chess.util.Color switchColor) {
         // Les Pieces
         this.move_historic =  new ArrayList<>();
         this.text_piece = new Text[8][8];
         board.reset();
-        this.original_pieces = board.getPieces();
         if(switchColor == chess.util.Color.WHITE) {
             for (int ligne = 0; ligne < 8; ligne++) {
                 for (int colonne = 0; colonne < 8; colonne++) {
                     Text piece_char;
                     if (board.getPiece(ligne, colonne) != null) {
                         Piece chess_piece = board.getPiece(ligne, colonne);
-                        //if(this.currentColor != switchColor) chess_piece.setColor(chess_piece.getColor() == chess.util.Color.WHITE ? chess.util.Color.BLACK : chess.util.Color.WHITE);
                         piece_char = new Text(Character.toString(chess_piece.getSymbol()));
                         piece_char.setTextAlignment(TextAlignment.CENTER);
                         text_piece[ligne][colonne] = piece_char;
@@ -393,7 +432,6 @@ public class Main extends Application {
                         echiquier.add(piece_char, colonne + 1, ligne + 1);
                     }
                 }
-                System.out.println("");
             }
             this.currentColor = switchColor;
         }
@@ -419,7 +457,6 @@ public class Main extends Application {
                     Text piece_char;
                     if (board.getPiece(ligne, colonne) != null) {
                         Piece chess_piece = board.getPiece(ligne, colonne);
-                        //chess_piece.setColor(chess_piece.getColor() == chess.util.Color.WHITE ? chess.util.Color.BLACK : chess.util.Color.WHITE);
                         piece_char = new Text(Character.toString(chess_piece.getSymbol()));
                         piece_char.setTextAlignment(TextAlignment.CENTER);
                         text_piece[ligne][colonne] = piece_char;
@@ -428,13 +465,20 @@ public class Main extends Application {
                         echiquier.add(piece_char, colonne + 1, ligne + 1);
                     }
                 }
-                System.out.println("");
             }
             this.currentColor = switchColor;
         }
         System.out.println(board);
     }
 
+    /**
+     * Permet d'obtenir l'élement à la position spécifiée dans le grillage
+     *
+     * @param gridPane le grillage
+     * @param col la colonne
+     * @param row la ligne
+     * @return l'élement Node du grillage GridPane
+     */
     private Node getNodeFromGridPane(GridPane gridPane, int col, int row) {
         for (Node node : gridPane.getChildren()) {
             if (GridPane.getColumnIndex(node) == col && GridPane.getRowIndex(node) == row) {
