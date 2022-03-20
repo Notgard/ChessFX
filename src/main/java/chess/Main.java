@@ -148,10 +148,7 @@ public class Main extends Application {
 
                     Piece chess_piece = board.getPiece(start);
 
-                    System.out.println(chess_piece.getSymbol());
-                    System.out.println(chess_piece.getPosition());
-                    System.out.println(end);
-                    System.out.println(chess_piece.getColor().name());
+
                     try {
                         chess_piece.moveTo(end);
                         deplace(text_piece[start.getX()][start.getY()], echiquier, end.getY()+1, end.getX()+1);
@@ -193,6 +190,9 @@ public class Main extends Application {
                                         System.out.println(x + "; " + y);
                                         System.out.println("Can move to : " + pos.toAlgebraicNotation());
                                         if (this.getNodeFromGridPane(echiquier, x, y) instanceof Rectangle) {
+                                            /**
+                                             * Affichage graphique des différents mouvements possibles d'une pièce
+                                             */
                                             Rectangle r = (Rectangle) this.getNodeFromGridPane(echiquier, y+1, x+1);
 
                                             System.out.println(r);
@@ -223,6 +223,9 @@ public class Main extends Application {
             boutons.setAlignment(Pos.BASELINE_LEFT);
             Button demarre_blanc = new Button("Je (re)démarre en blanc");
 
+            /**
+             * Changer de côté (Noir)
+             */
             demarre_blanc.setOnAction(e -> {
                 for(Text[] chars : this.text_piece) {
                     for (Text pieces : chars) {
@@ -237,6 +240,10 @@ public class Main extends Application {
 
             Button demarre_noir = new Button("Je (re)démarre en noir");
 
+
+            /**
+             * Changer de côté (Noir)
+             */
             demarre_noir.setOnAction(e ->
             {
                 for(Text[] chars : this.text_piece) {
@@ -255,6 +262,9 @@ public class Main extends Application {
             quitter.setOnAction(e -> Platform.exit());
 
 
+            /**
+             * Action de l'Intelligence Artificielle pendant l'appui sur le bouton
+             */
             Button AIMove = new Button("Coup de l'IA");
             AIMove.setOnAction(e -> {
                AI ai = new AI();
@@ -303,9 +313,10 @@ public class Main extends Application {
             // crée la scène (contenu de la fenêtre principale
             Scene scene = new Scene(root, 700, 520);
 
-
+            // conteneur des zones de saisies et des boutons
             VBox container = new VBox();
             container.getChildren().addAll(saisie, boutons);
+
             // On remplit verticalement les 3 zones centrales de l'application
             root.setLeft(echiquier);
             root.setCenter(historic);
@@ -408,10 +419,10 @@ public class Main extends Application {
     }
 
     /**
-     * Permet de mettre en place les pièces
+     * Permet de mettre en place les pièces de l'échiquier
      *
-     * @param board
-     * @param switchColor
+     * @param board l'échiquier
+     * @param switchColor la couleur de départ du joueur principal
      */
     private void setupPieces(Chessboard board, chess.util.Color switchColor) {
         // Les Pieces
