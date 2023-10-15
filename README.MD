@@ -1,4 +1,4 @@
-# Projet S4 jeu d'échec JavaFX  
+# Projet jeu d'échec JavaFX  
 
 ### Il y a 2 problèmes avec l'application courante:
 ### L'IA
@@ -11,7 +11,7 @@
 
 ---
 
-##Exemples d'éxecution:
+## Exemples d'éxecution:
 
 <br>
 
